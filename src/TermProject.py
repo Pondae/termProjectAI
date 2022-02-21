@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlparse, urljoin
 from pathlib import Path
 
-
+#baby girl
 class MultiThreadCrawler:
     def __init__(self, base_url, depth):
         self.base_url = base_url
