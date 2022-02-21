@@ -100,6 +100,6 @@ class MultiThreadCrawler:
             pass
 
 
-if __name__ == '__main__':
-    s = MultiThreadCrawler("https://www.cmu.ac.th/", 1)
+def searchwebsite(qurey):
+    s = MultiThreadCrawler(qurey, 1)
     s.run_scraper()
