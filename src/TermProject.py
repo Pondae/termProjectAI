@@ -52,14 +52,11 @@ class MultiThreadCrawler:
                 with open(self.stored_folder / 'url_list.pickle', 'rb') as f:  # show link that store in url_list.pickle if node that empty
                     print(pickle.load(f))
 
-
                     with open("../crawled/url_list.pickle", "rb") as f:
                         object = pickle.load(f)
                     data = pd.DataFrame(object)
                     data.to_csv("resource/data.csv")
-                    csv_file_path = pd.read_csv("resource/data.csv", sep=',')
-                    csv_file_path = csv_file_path.rename({'Unnamed: 0': 'Index', '0': 'Url'}, axis=1)
-                    csv_file_path.to_json("resource/data.json", indent=1, orient='records')
+
 
                 break
             except Exception as e:
