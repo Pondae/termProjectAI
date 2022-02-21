@@ -1,3 +1,6 @@
+import os.path
+import sys
+
 import requests
 import multiprocessing
 import pickle
@@ -8,6 +11,7 @@ from queue import Queue, Empty
 from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlparse, urljoin
 from pathlib import Path
+import pandas as pd
 
 #baby girl
 class MultiThreadCrawler:
@@ -44,6 +48,16 @@ class MultiThreadCrawler:
                     pickle.dump(self.crawled_pages, f, pickle.HIGHEST_PROTOCOL)
                 with open(self.stored_folder / 'url_list.pickle', 'rb') as f:
                     print(pickle.load(f))
+
+                    with open("../crawled/url_list.pickle", "rb") as f:
+                        object = pickle.load(f)
+                    data = pd.DataFrame(object)
+                    data.to_csv("resource/data.csv")
+                    csv_file_path = pd.read_csv("resource/data.csv", sep=',')
+                    csv_file_path = csv_file_path.rename({'Unnamed: 0': 'Index', '0': 'Url'}, axis=1)
+                    csv_file_path.to_json("resource/data.json", indent=1, orient='records')
+
+
                 break
             except Exception as e:
                 print(e)
@@ -55,8 +69,6 @@ class MultiThreadCrawler:
             if result and result.status_code == 200:
                 url_lists = self.parse_links(result.text, depth)
                 self.parse_contents(url, result.text, url_lists)
-                # if depth >= 0:
-                #     self.parse_links(result.text, depth)
 
     def get_page(self, url, depth):
         try:
@@ -101,5 +113,5 @@ class MultiThreadCrawler:
 
 
 if __name__ == '__main__':
-    s = MultiThreadCrawler("https://camt.cmu.ac.th/index.php/en/", 1)
+    s = MultiThreadCrawler("https://www.bbc.com", 1)
     s.run_scraper()
