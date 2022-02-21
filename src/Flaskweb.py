@@ -7,11 +7,19 @@ from flask_cors import cross_origin
 
 app = Flask(__name__)
 
+@app.route('/')
+def hello_world():  # put application's code here
+    return 'Hello World!'
 
 @app.route("/search", methods=["POST"])
 @cross_origin()
 def Searchwebsite():
-    return jsonify(searchwebsite(request.json['query']))
+    return jsonify(MultiThreadCrawler.searchwebsite(request.json['query']))
+
+
+@app.route('/data', methods=['GET'])
+def song_title():
+    return jsonify(get_data())
 
 
 if __name__ == '__main__':

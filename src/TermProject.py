@@ -117,6 +117,16 @@ class MultiThreadCrawler:
         except:
             pass
 
+def get_data():
+    json = []
+    json_file_path = pd.read_csv("resource/data.csv", sep=',')
+    for index, row in json_file_path.iterrows():
+        json.append(
+            {'Index': row[0], 'Url': row[1]}
+        )
+    return json
+
+
 
 if __name__ == '__main__':
     s = MultiThreadCrawler("https://www.bbc.com", 1)
