@@ -13,8 +13,11 @@ from urllib.parse import urlparse, urljoin
 from pathlib import Path
 import pandas as pd
 
-#baby girl
+
+# baby girl
 class MultiThreadCrawler:
+    history = []
+
     def __init__(self, base_url, depth):
         self.base_url = base_url
         extracted_url = urlparse(base_url)
@@ -57,7 +60,6 @@ class MultiThreadCrawler:
                     csv_file_path = csv_file_path.rename({'Unnamed: 0': 'Index', '0': 'Url'}, axis=1)
                     csv_file_path.to_json("resource/data.json", indent=1, orient='records')
 
-
                 break
             except Exception as e:
                 print(e)
@@ -77,6 +79,9 @@ class MultiThreadCrawler:
         except requests.RequestException:
             return
 
+    def get_history(self):
+        return [{i: data} for i, data in enumerate(self.history)]
+
     def parse_links(self, html, depth):
         soup = BeautifulSoup(html, 'html.parser')
         links = soup.find_all('a', href=True)
@@ -88,6 +93,7 @@ class MultiThreadCrawler:
                 print("Adding {}".format(url))
                 self.to_crawl.put({url: depth})
             url_lists.append(url)
+            self.history = url_lists
         return url_lists
 
     def parse_contents(self, url, html, url_lists):
@@ -115,3 +121,4 @@ class MultiThreadCrawler:
 if __name__ == '__main__':
     s = MultiThreadCrawler("https://www.bbc.com", 1)
     s.run_scraper()
+    print(s.get_history())
