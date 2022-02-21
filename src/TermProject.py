@@ -1,3 +1,6 @@
+import os.path
+import sys
+
 import requests
 import multiprocessing
 import pickle
@@ -8,9 +11,13 @@ from queue import Queue, Empty
 from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlparse, urljoin
 from pathlib import Path
+import pandas as pd
+
 
 
 class MultiThreadCrawler:
+    history = []
+
     def __init__(self, base_url, depth):
         self.base_url = base_url
         extracted_url = urlparse(base_url)
@@ -45,6 +52,15 @@ class MultiThreadCrawler:
                 with open(self.stored_folder / 'url_list.pickle', 'rb') as f:  # show link that store in url_list.pickle if node that empty
                     print(pickle.load(f))
 
+
+                    with open("../crawled/url_list.pickle", "rb") as f:
+                        object = pickle.load(f)
+                    data = pd.DataFrame(object)
+                    data.to_csv("resource/data.csv")
+                    csv_file_path = pd.read_csv("resource/data.csv", sep=',')
+                    csv_file_path = csv_file_path.rename({'Unnamed: 0': 'Index', '0': 'Url'}, axis=1)
+                    csv_file_path.to_json("resource/data.json", indent=1, orient='records')
+
                 break
             except Exception as e:
                 print(e)
@@ -57,15 +73,16 @@ class MultiThreadCrawler:
             if result and result.status_code == 200:
                 url_lists = self.parse_links(result.text, depth) #find each url in the website
                 self.parse_contents(url, result.text, url_lists) #inside each url has what each content
-                # if depth >= 0:
-                #     self.parse_links(result.text, depth)
-
+             
     def get_page(self, url, depth):
         try:
             res = requests.get(url, timeout=(3, 30))
             return res, url, depth
         except requests.RequestException:
             return
+
+    def get_history(self):
+        return [{i: data} for i, data in enumerate(self.history)]
 
     def parse_links(self, html, depth):
         soup = BeautifulSoup(html, 'html.parser')
@@ -78,6 +95,7 @@ class MultiThreadCrawler:
                 # print("Adding {}".format(url))
                 self.to_crawl.put({url: depth})
             url_lists.append(url)
+            self.history = url_lists
         return url_lists
 
     def parse_contents(self, url, html, url_lists):
@@ -100,6 +118,7 @@ class MultiThreadCrawler:
             pass
 
 
-def searchwebsite(qurey):
-    s = MultiThreadCrawler(qurey, 1)
+if __name__ == '__main__':
+    s = MultiThreadCrawler("https://www.bbc.com", 1)
     s.run_scraper()
+    print(s.get_history())
