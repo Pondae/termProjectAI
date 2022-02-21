@@ -14,7 +14,7 @@ from pathlib import Path
 import pandas as pd
 
 
-# baby girl
+
 class MultiThreadCrawler:
     history = []
 
@@ -33,7 +33,7 @@ class MultiThreadCrawler:
         if Path(self.stored_folder / 'url_list.pickle').exists():
             with open(self.stored_folder / 'url_list.pickle', 'rb') as f:
                 self.crawled_pages = pickle.load(f)
-            print(self.crawled_pages)
+            # print(self.crawled_pages)
         else:
             self.crawled_pages = set([])
 
@@ -42,15 +42,16 @@ class MultiThreadCrawler:
             try:
                 target = self.to_crawl.get(timeout=10)
                 url, depth = [(k, target[k]) for k in target][0]
-                if url not in self.crawled_pages:
+                if url not in self.crawled_pages:  # find url and content
                     self.crawled_pages.add(url)
                     job = self.pool.submit(self.get_page, url, depth - 1)
                     job.add_done_callback(self.extract_page)
             except Empty:
                 with open(self.stored_folder / 'url_list.pickle', 'wb') as f:
                     pickle.dump(self.crawled_pages, f, pickle.HIGHEST_PROTOCOL)
-                with open(self.stored_folder / 'url_list.pickle', 'rb') as f:
+                with open(self.stored_folder / 'url_list.pickle', 'rb') as f:  # show link that store in url_list.pickle if node that empty
                     print(pickle.load(f))
+
 
                     with open("../crawled/url_list.pickle", "rb") as f:
                         object = pickle.load(f)
@@ -66,12 +67,13 @@ class MultiThreadCrawler:
                 continue
 
     def extract_page(self, obj):
+        # respone each link that has status 200
         if obj.result():
             result, url, depth = obj.result()
             if result and result.status_code == 200:
-                url_lists = self.parse_links(result.text, depth)
-                self.parse_contents(url, result.text, url_lists)
-
+                url_lists = self.parse_links(result.text, depth) #find each url in the website
+                self.parse_contents(url, result.text, url_lists) #inside each url has what each content
+             
     def get_page(self, url, depth):
         try:
             res = requests.get(url, timeout=(3, 30))
@@ -90,7 +92,7 @@ class MultiThreadCrawler:
             url = link['href']
             url = urljoin(self.root_url, url)
             if depth >= 0 and '..' not in url and url not in self.crawled_pages:
-                print("Adding {}".format(url))
+                # print("Adding {}".format(url))
                 self.to_crawl.put({url: depth})
             url_lists.append(url)
             self.history = url_lists
@@ -108,10 +110,8 @@ class MultiThreadCrawler:
             soup = BeautifulSoup(html, 'html.parser')
             texts = soup.findAll(text=True)
             visible_texts = filter(tag_visible, texts)
-
             title = soup.find('title').string.strip()
             text = u" ".join(t.strip() for t in visible_texts).strip()
-
             with open(self.stored_folder / (str(hash(url)) + '.txt'), 'w', encoding='utf-8') as f:
                 json.dump({'url': url, 'title': title, 'text': text, 'url_lists': url_lists}, f, ensure_ascii=False)
         except:
