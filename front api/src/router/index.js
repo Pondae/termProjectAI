@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Searchlist from "../views/Searchlist.vue";
-import SearchAS from "../views/SearchAS.vue";
+import Storageview from "../views/Storageview.vue";
 const routes = [
   {
     path: "/",
@@ -8,10 +8,10 @@ const routes = [
     component: Searchlist,
   },
   {
-    path: "/searchAS",
-    name: "SearchAS",
-    component: SearchAS,
-  },
+    path: "/storageview",
+    name: "Storageview",
+    component: Storageview,
+  }
 ];
 
 const router = createRouter({

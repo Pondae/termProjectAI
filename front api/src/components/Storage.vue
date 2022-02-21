@@ -10,15 +10,20 @@
     <div class="card" style="100">
       <div class="card-body">
         <span>
+          <span
+            ><h4>SongName:</h4>
+            <h5>
+              <!-- {{ dataweb }} -->
+            </h5></span
+          >
           <h5 class="card-title"></h5>
-           <h4>SongName:</h4>
-          <h4 class="card-text">
-            
-            {{ dataArtist.Songname }}
-          </h4>
+          <p class="card-text">
+            <!-- {{ dataweb}} -->
+          </p>
         </span>
         <br />
         <br />
+        <h5>ARTIST: {{ storage }}</h5>
       </div>
     </div>
   </div>
@@ -26,9 +31,9 @@
 
 <script>
 export default {
-  name: "Searchresult",
+  name: "storageview",
   props: {
-    dataArtist: {
+    storage: {
       type: Object,
       required: true,
     },
@@ -48,6 +53,7 @@ export default {
   font-family: "Raleway", sans-serif;
   text-transform: lowercase;
   font-weight: 500;
+  font-size: 14px;
   letter-spacing: 1px;
   display: inline-block;
   border-radius: 60px;

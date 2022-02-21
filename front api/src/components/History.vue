@@ -12,16 +12,18 @@
         <span>
           <span
             ><h4>SongName:</h4>
-            <h5>{{ dataTF_IDF.Songname }}</h5></span
+            <h5>
+              <!-- {{ dataweb }} -->
+            </h5></span
           >
           <h5 class="card-title"></h5>
           <p class="card-text">
-            {{ dataTF_IDF.Lyric }}
+            <!-- {{ dataweb}} -->
           </p>
         </span>
         <br />
         <br />
-        <h5>ARTIST: {{ dataTF_IDF.artist }}</h5>
+        <h5>ARTIST: {{ history }}</h5>
       </div>
     </div>
   </div>
@@ -31,7 +33,7 @@
 export default {
   name: "Searchresult",
   props: {
-    dataTF_IDF: {
+    history: {
       type: Object,
       required: true,
     },

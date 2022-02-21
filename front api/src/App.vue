@@ -1,13 +1,12 @@
 <template>
   <nav class="navbar">
-    <router-link to="/searchAS" class="nav-link">
-      <h5 id="AS">Search Artist & Search Songname</h5>
+    <router-link to="/storageview" class="nav-link">
+      <h5 id="AS">Storage</h5>
     </router-link>
     <router-link to="/" class="nav-link">
-      <h5 id="AS">Search Vector</h5>
+      <h5 id="AS">Search Web</h5>
     </router-link>
   </nav>
-  <br />
   <div>
     <router-view />
   </div>
